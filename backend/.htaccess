@@ -1,0 +1,26 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /backend/
+
+    # Remove .php extension
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ index.php?request=$1 [QSA,L]
+
+    # Prevent direct access to subdirectories
+    RewriteCond %{REQUEST_URI} ^/backend/config
+    RewriteRule ^ - [F,L]
+    
+    RewriteCond %{REQUEST_URI} ^/backend/database
+    RewriteRule ^ - [F,L]
+    
+    RewriteCond %{REQUEST_URI} ^/backend/utils
+    RewriteRule ^ - [F,L]
+    
+    RewriteCond %{REQUEST_URI} ^/backend/middleware
+    RewriteRule ^ - [F,L]
+</IfModule>
+
+<FilesMatch "\.php$">
+    Header set X-Content-Type-Options "nosniff"
+</FilesMatch>
