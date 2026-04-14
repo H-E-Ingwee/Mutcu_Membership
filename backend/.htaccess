@@ -11,19 +11,25 @@
     RewriteRule ^api/(.*)$ index.php?request=api/$1 [QSA,L]
 </IfModule>
 
-# Protect sensitive directories
-<Directory "/mutcu_membership/backend/config">
-    Deny from all
-</Directory>
+# Protect sensitive files and directories from direct access
+# Block access to config directory files
+<FilesMatch "(config|database|utils|middleware)">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
 
-<Directory "/mutcu_membership/backend/database">
-    Deny from all
-</Directory>
-
-<Directory "/mutcu_membership/backend/utils">
-    Deny from all
-</Directory>
-
-<Directory "/mutcu_membership/backend/middleware">
-    Deny from all
-</Directory>
+# Prevent direct access to sensitive PHP files
+<FilesMatch "(Config|Database|Auth|Response|Validator|CheckAuth|CORS)\.php$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
